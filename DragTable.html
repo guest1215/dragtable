@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.5.1.js"
+        integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<style>
+    .dragTable {
+        width: 600px;
+        display: block;
+        margin: auto;
+        cursor: move;
+        -webkit-user-select: none;
+        -webkit-user-drag: none;
+    }
+    .dummyTr{
+        position: fixed;
+        width: 462px;
+        z-index: 5;
+        height: 50px;
+        background: #beedef59;
+        border: 1px dotted rgb(225 1 1);
+    }
+</style>
+
+<body>
+    <table class="dragTable table table-responsive">
+        <thead>
+            <tr>
+                <th>Company</th>
+                <th>Contact</th>
+                <th>Country</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr data-index="0">
+                <td>Alfreds Futterkiste</td>
+                <td>Maria Anders</td>
+                <td>Germany</td>
+            </tr>
+            <tr data-index="1">
+                <td>Centro comercial Moctezuma</td>
+                <td>Francisco Chang</td>
+                <td>Mexico</td>
+            </tr>
+            <tr data-index="2">
+                <td>Ernst Handel</td>
+                <td>Roland Mendel</td>
+                <td>Austria</td>
+            </tr>
+            <tr data-index="3">
+                <td>Island Trading</td>
+                <td>Helen Bennett</td>
+                <td>UK</td>
+            </tr>
+            <tr data-index="4">
+                <td>Laughing Bacchus Winecellars</td>
+                <td>Yoshi Tannamuri</td>
+                <td>Canada</td>
+            </tr>
+            <tr data-index="5">
+                <td>Magazzini Alimentari Riuniti</td>
+                <td>Giovanni Rovelli</td>
+                <td>Italy</td>
+            </tr>
+            <!-- <tr class="dummyTr">
+            </tr> -->
+        </tbody>
+    </table>
+
+    <script>
+        const dragTable = $('.dragTable')
+        const rows =  $('.dragTable tbody > tr')
+       
+        let mouseY
+        let enableDrag = false;
+        let currTr
+        let isSwapped
+
+        $(window).on('mousedown', (e)=>{
+            enableDrag = !enableDrag;
+
+            currTr = {
+                element: $(e.target).closest("tr"),
+                positionY: $(e.target).offset().top
+            }
+        })
+
+        $(window).on('mousemove', (e)=>{
+            if(enableDrag){
+                targetTr = $(e.target).closest("tr")
+                if(targetTr.length > 0){
+                    currTr.element.css("background", "#e4e3eb")
+
+                    if(!targetTr.is(currTr.element)){
+                        let tempFirstTr = currTr
+                        currTr.element.offset({
+                            top: targetTr.offset().top
+                        })
+                        targetTr.offset({
+                            top: tempFirstTr.positionY
+                        })
+                        currTr = {
+                            element: currTr.element,
+                            positionY: tempFirstTr.element.offset().top
+                        }
+                    }
+                    $(".dummyTr").offset({
+                        top: currTr.positionY
+                    })
+                }
+            }
+        })
+
+        $(window).on('mouseup', (e)=>{
+            if(enableDrag){
+                enableDrag = !enableDrag;
+            }
+        })
+
+    </script>
+</body>
+
+</html>
